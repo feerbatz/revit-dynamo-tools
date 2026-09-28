@@ -1,0 +1,195 @@
+{
+  "Uuid": "3a0aceb1-3309-400a-9c5e-174fa41c7413",
+  "IsCustomNode": false,
+  "Description": "",
+  "Name": "schedule-export",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "CoreNodeModels.Input.Directory, CoreNodeModels",
+      "Id": "e2f389b2e9704bbcb9e348fc4f095488",
+      "NodeType": "ExtensionNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "c274d3f60a7c42538796dfacc5d9c777",
+          "Name": "",
+          "Description": "Ruta de directorio",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Permite seleccionar un directorio del sistema y devuelve su ruta.",
+      "HintPath": "C:\\Exportar",
+      "InputValue": "C:\\Exportar"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "Id": "5670b12020714217a1ed7cc30e077d49",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "06c6bd9bde2e4866a57b0df62e4c7186",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Crea una cadena",
+      "InputValue": ";"
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "Code": "# Nodo Python en Dynamo (motor CPython3 o IronPython2)\r\nimport clr\r\nclr.AddReference('RevitAPI')\r\nclr.AddReference('RevitServices')\r\nfrom Autodesk.Revit.DB import *\r\nfrom RevitServices.Persistence import DocumentManager\r\n\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\n\r\ncarpeta      = IN[0]   # ruta destino, ej: r\"C:\\Exportar\"\r\ndelimitador  = IN[1]   # \";\"  \",\"  o  \"\\t\"\r\n\r\nopts = ViewScheduleExportOptions()\r\nopts.FieldDelimiter       = delimitador\r\nopts.TextQualifier        = ExportTextQualifier.DoubleQuote\r\nopts.ColumnHeaders        = ExportColumnHeaders.OneRow\r\nopts.Title                = False   # el nombre de archivo ya identifica la tabla\r\nopts.HeadersFootersBlanks = False   # datos limpios, sin filas de grupo/blancos\r\n\r\ntablas = FilteredElementCollector(doc).OfClass(ViewSchedule).ToElements()\r\n\r\nexportadas = []\r\nfor t in tablas:\r\n    if t.IsTitleblockRevisionSchedule:   # ignora tablas de revisiones de rótulos\r\n        continue\r\n    nombre = t.Name\r\n    for c in r'\\/:*?\"<>|':\r\n        nombre = nombre.replace(c, \"_\")   # limpia caracteres inválidos\r\n    t.Export(carpeta, nombre + \".csv\", opts)\r\n    exportadas.append(nombre)\r\n\r\nOUT = exportadas",
+      "Engine": "CPython3",
+      "VariableInputPorts": true,
+      "Id": "725c8e517be54d0683d329d9e8c4da5c",
+      "NodeType": "PythonScriptNode",
+      "Inputs": [
+        {
+          "Id": "45387417a7774421b4ba27a879fd48a6",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "672b2e71ece548758f40a9b9d3395310",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "7e36edad6b1042d5987a2ec27b9f8d58",
+          "Name": "OUT",
+          "Description": "Resultado de la secuencia de comandos de Python",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Ejecuta una secuencia de comandos de Python incrustada."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "c274d3f60a7c42538796dfacc5d9c777",
+      "End": "45387417a7774421b4ba27a879fd48a6",
+      "Id": "9037779fd2c440ef97eae2f30ab09043",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "06c6bd9bde2e4866a57b0df62e4c7186",
+      "End": "672b2e71ece548758f40a9b9d3395310",
+      "Id": "d23f2e13a00a44f996c05769240c77ac",
+      "IsHidden": "False"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "EnableLegacyPolyCurveBehavior": null,
+  "Thumbnail": "",
+  "GraphDocumentationURL": null,
+  "ExtensionWorkspaceData": [
+    {
+      "ExtensionGuid": "28992e1d-abb9-417f-8b1b-05e053bee670",
+      "Name": "Propiedades",
+      "Version": "3.3",
+      "Data": {}
+    },
+    {
+      "ExtensionGuid": "DFBD9CC0-DB40-457A-939E-8C8555555A9D",
+      "Name": "Generative Design",
+      "Version": "8.2",
+      "Data": {}
+    }
+  ],
+  "Author": "",
+  "Linting": {
+    "activeLinter": "Ninguno",
+    "activeLinterId": "7b75fb44-43fd-4631-a878-29f4d5d8399a",
+    "warningCount": 0,
+    "errorCount": 0
+  },
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "3.3.0.6316",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "_Vista preliminar en segundo plano",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "ConnectorPins": [],
+    "NodeViews": [
+      {
+        "Id": "e2f389b2e9704bbcb9e348fc4f095488",
+        "Name": "Directory Path",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 181.33333333333354,
+        "Y": 247.00000000000006
+      },
+      {
+        "Id": "5670b12020714217a1ed7cc30e077d49",
+        "Name": "String",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 452.00000000000017,
+        "Y": 416.33333333333326
+      },
+      {
+        "Id": "725c8e517be54d0683d329d9e8c4da5c",
+        "Name": "Python Script",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 729.3333333333334,
+        "Y": 251.66666666666669
+      }
+    ],
+    "Annotations": [],
+    "X": 0.0,
+    "Y": 0.0,
+    "Zoom": 1.0
+  }
+}
