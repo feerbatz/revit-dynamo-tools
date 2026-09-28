@@ -7,6 +7,7 @@ Dynamo and Python tools to automate repetitive Revit workflows, built from real 
 | Tool | Description | Type |
 |------|-------------|------|
 | [Parking Numbering by Path](parking-numbering/) | Numbers parking spaces sequentially following a path line drawn by the user. | Dynamo |
+| [Schedule Batch Export to CSV](schedule-export/) | Exports every schedule in the model to CSV in one run, with a configurable delimiter. | Dynamo + Python |
 
 More tools coming soon.
 
